@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-wp-dep
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-webserver
+  template:
+    metadata:
+      labels:
+        app: my-webserver
+    spec:
+      containers:
+      - name: apache-wp
+        image: <docker-image>
+        ports:
+        - containerPort: <container-port>
+      # Add volume mounts for Dockerfile and any other required files
+      volumeMounts:
+      - name: dockerfile-volume
+        mountPath: /dockerfile-path
+        readOnly: true
+      # Add any additional configuration here, such as environment variables, etc.
+      volumes:
+      - name: dockerfile-volume
+        hostPath:
+          path: /path/to/dockerfile-directory
