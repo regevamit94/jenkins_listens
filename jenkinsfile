@@ -3,7 +3,9 @@ pipeline {
     
      environment {
        CLUSTERNAME = 'test'
+       HOME = "${HOME}"
        TARGETDIRECTORY = "${HOME}/imjenkinsslave/"
+        SSHCREDENTIALS = 'your-ssh-credentials-id'
     }  
 
     stages {
@@ -15,7 +17,7 @@ pipeline {
                         error "Kubernetes cluster '$CLUSTERNAME' is running!"
                     } else {
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
-                        sh(script:"scp kind.yaml amit@192.168.0.105:${HOME}/imjenkinsslave/")
+                        sh(script:"scp -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no your-yaml-file.yaml $SSH_CREDENTIALS@${env.NODE_NAME}:$TARGETDIRECTORY")
                         sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config $TARGETDIRECTORY/kind.yaml")
                     }
                 }
