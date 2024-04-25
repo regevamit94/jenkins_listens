@@ -1,10 +1,21 @@
 pipeline {
     agent any
+    
+    environment {
+        CLUSTERNAME = 'test'
+    }
+
     stages {
-        stage('Test') {
+        stage('Check if Cluster exists') {
             steps {
                 script {
-                    echo "hello world this is test"
+                    def statusCode = sh(script: "kubectl get nodes --context=$CLUSTERNAME --no-headers | wc -l", returnStatus: true).trim()
+                    if (statusCode == '0') {
+                        error "Kubernetes cluster '$CLUSTERNAME' is not running!"
+                        sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config /imjenkinsslave/kind.yaml")
+                    } else {
+                        echo "Kubernetes cluster '$CLUSTERNAME' is running."
+                    }
                 }
             }
         }
