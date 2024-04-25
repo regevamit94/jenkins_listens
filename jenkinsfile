@@ -9,7 +9,7 @@ pipeline {
         stage('Check if Cluster exists') {
             steps {
                 script {
-                    def statusCode = sh(script: "kind get clusters | grep -w $CLUSTERNAME", returnStatus: true).trim()
+                    def statusCode = sh(script: "sudo kind get clusters | grep -w $CLUSTERNAME", returnStatus: true).trim()
                     if (statusCode == '0') {
                         error "Kubernetes cluster '$CLUSTERNAME' is not running!"
                         sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config ~/imjenkinsslave/kind.yaml")
