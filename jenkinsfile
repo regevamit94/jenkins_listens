@@ -10,11 +10,11 @@ pipeline {
             steps {
                 script {
                     def statusCode = sh(script: "kind get clusters | grep -w $CLUSTERNAME", returnStatus: true)
-                    if (statusCode == '0') {
-                        error "Kubernetes cluster '$CLUSTERNAME' is not running!"
-                        sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config ~/imjenkinsslave/kind.yaml")
+                    if (statusCode == '1') {
+                        error "Kubernetes cluster '$CLUSTERNAME' is running!"
                     } else {
-                        echo "Kubernetes cluster '$CLUSTERNAME' is running."
+                        echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
+                        sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config ~/imjenkinsslave/kind.yaml")
                     }
                 }
             }
