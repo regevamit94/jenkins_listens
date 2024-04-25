@@ -1,9 +1,9 @@
 pipeline {
     agent any
     
-    environment {
-    /*    CLUSTERNAME = 'test'*/
-    }
+    /* environment {
+       CLUSTERNAME = 'test'
+    } */ 
 
     stages {
         stage('Check if Cluster exists') {
