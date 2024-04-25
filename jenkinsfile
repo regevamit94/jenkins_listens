@@ -3,6 +3,7 @@ pipeline {
     
      environment {
        CLUSTERNAME = 'test'
+       TARGETDIRECTORY = "${HOME}/imjenkinsslave/"
     }  
 
     stages {
@@ -14,7 +15,8 @@ pipeline {
                         error "Kubernetes cluster '$CLUSTERNAME' is running!"
                     } else {
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
-                        sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config ~/imjenkinsslave/kind.yaml")
+                        sh(script:"scp kind.yaml amit@192.168.0.105:${HOME}/imjenkinsslave/")
+                        sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config $TARGETDIRECTORY/kind.yaml")
                     }
                 }
             }
