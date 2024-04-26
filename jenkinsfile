@@ -11,7 +11,6 @@ pipeline {
        CLUSTERNAME = 'test'
        HOME = "${HOME}"
        TARGETDIRECTORY = "${HOME}/imjenkinsslave/"
-       SSHCREDENTIALS = credentials('your-ssh-credentials-id')
     }  
 
     stages {
@@ -24,7 +23,7 @@ pipeline {
                     } else {
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
                         sshagent(credentials: [params.SSH_CREDENTIALS_ID]) {
-                        sh(script:"scp -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no your-yaml-file.yaml $SSHCREDENTIALS@${env.NODE_NAME}:$TARGETDIRECTORY")
+                        sh(script:"scp -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no your-yaml-file.yaml $SSH_CREDENTIALS_ID@${env.NODE_NAME}:$TARGETDIRECTORY")
                     }
                         sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config $TARGETDIRECTORY/kind.yaml")
                 }
