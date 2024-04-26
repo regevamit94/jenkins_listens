@@ -1,11 +1,17 @@
 pipeline {
     agent any
-    
+    parameters {
+        choice(
+            name: 'SSH_CREDENTIALS_ID',
+            choices: ['3861a10a-9cb6-419e-8405-c7a26dbfeace'], // Add your SSH credentials IDs here
+            description: 'Select SSH credentials ID:'
+        )
+    }
      environment {
        CLUSTERNAME = 'test'
        HOME = "${HOME}"
        TARGETDIRECTORY = "${HOME}/imjenkinsslave/"
-        SSHCREDENTIALS = credentials('your-ssh-credentials-id')
+       SSHCREDENTIALS = credentials('your-ssh-credentials-id')
     }  
 
     stages {
@@ -17,9 +23,10 @@ pipeline {
                         error "Kubernetes cluster '$CLUSTERNAME' is running!"
                     } else {
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
+                        sshagent(credentials: [params.SSH_CREDENTIALS_ID]) {
                         sh(script:"scp -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no your-yaml-file.yaml $SSHCREDENTIALS@${env.NODE_NAME}:$TARGETDIRECTORY")
-                        sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config $TARGETDIRECTORY/kind.yaml")
                     }
+                        sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config $TARGETDIRECTORY/kind.yaml")
                 }
             }
         }
