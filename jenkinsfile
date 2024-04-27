@@ -23,7 +23,8 @@ pipeline {
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
 
                     }
-                    git 'git@github.com:regevamit94/jenkins_listens.git'
+                    git 'https://github.com/regevamit94/jenkins_listens.git'
+                        credentialsId: 'ca585f6b-23d5-4131-8d32-e9ad6c2efa75'	
                     sh "scp kind.yaml $SSH_USER@$SSH_HOST:$TARGETDIRECTORY"
                     sh(script:"kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config $TARGETDIRECTORY/kind.yaml")
                 }
