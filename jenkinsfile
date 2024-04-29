@@ -26,6 +26,7 @@ pipeline {
                     }
                     sh 'git clone https://$CREDS@github.com/regevamit94/jenkins_listens.git'
                     sh "kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config jenkins_listens/kind.yaml"
+                    sh "docker build -f jenkins_listens/Dockerfile . -t apache-wp"
                 }
             }
         }
