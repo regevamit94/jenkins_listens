@@ -1,10 +1,14 @@
+def imageName = "your-image-name"
+def deploymentName = "apache-wp-dep"
+def labelName = "my-webserver"
+def containerName = "apache-wp"
+def containerPort = 80
+
 pipeline {
     agent {label 'my_jenkins_slave'}
 
      environment {
        CLUSTERNAME = 'test'
-       HOME = "${HOME}"
-       TARGETDIRECTORY = "${HOME}/imjenkinsslave"
        CREDS = credentials('ca585f6b-23d5-4131-8d32-e9ad6c2efa75')
     }  
 
@@ -26,7 +30,15 @@ pipeline {
                     }
                     sh 'git clone https://$CREDS@github.com/regevamit94/jenkins_listens.git'
                     sh "kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config jenkins_listens/kind.yaml"
-                    sh "docker build -f jenkins_listens/Dockerfile . -t apache-wp"
+                    def statusCode = sh(script: "docker images | grep -w  apache-wp", returnStatus: true)
+                    if (statusCode == '1') {
+                        echo "Image is already installed. skipping image build..."
+                    } else {
+                        sh "docker build -f jenkins_listens/Dockerfile . -t apache-wp"
+                    }
+                    sh "kubectl config use-context $CLUSTERNAME"
+                    def statusCode = sh(script: "kubectl get deployments | grep -w  apache-wp", returnStatus: true)
+                    sh "kubectl apply -f jenkins_listens/deployment.yaml"
                 }
             }
         }

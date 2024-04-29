@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apache-wp-dep
+  name: ${deploymentName}
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: my-webserver
+      app: ${labelName}
   template:
     metadata:
       labels:
-        app: my-webserver
+        app: ${labelName}
     spec:
       containers:
-      - name: apache-wp
-        image: apache-wp
+      - name: ${containerName}
+        image: ${imageName}
         ports:
-        - containerPort: 80
+        - containerPort: ${containerPort}
