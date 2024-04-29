@@ -1,7 +1,6 @@
 pipeline {
     agent {label 'my_jenkins_slave'}
 
-    }
      environment {
        CLUSTERNAME = 'test'
        HOME = "${HOME}"
