@@ -23,6 +23,6 @@ spec:
       containers:
       - name: ${containerName}
         image: ${imageName}
-        imagePullPolicy: allow
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: ${containerPort}
