@@ -31,6 +31,7 @@ pipeline {
                     }
                     sh 'git clone https://$CREDS@github.com/regevamit94/jenkins_listens.git'
                     sh "kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config jenkins_listens/kind.yaml"
+                    def statusCode = 0
                     def statusCode = sh(script: "docker images | grep -w  $imageName", returnStatus: true)
                     if (statusCode == '1') {
                         echo "Image is already installed. skipping image build..."
@@ -38,6 +39,7 @@ pipeline {
                         sh "docker build -f jenkins_listens/Dockerfile . -t $imageName"
                     }
                     sh "kubectl config use-context $CLUSTERNAME"
+                    def statusCode = 0
                     def statusCode = sh(script: "kubectl get deployments | grep -w $deploymentName", returnStatus: true)
                     sh "kubectl apply -f jenkins_listens/deployment.yaml"
                 }
