@@ -22,6 +22,6 @@ spec:
     spec:
       containers:
       - name: ${containerName}
-        image: ${imageName}
+        image: apache-wp
         ports:
         - containerPort: 80

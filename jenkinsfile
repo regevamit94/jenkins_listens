@@ -60,7 +60,7 @@ pipeline {
                             sh "sed -i 's/\${deploymentName}/$deploymentName/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${labelName}/$labelName/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${containerName}/$containerName/' jenkins_listens/deployment.yaml"
-                            sh "sed -i 's/\${imageName}/$imageName/' jenkins_listens/deployment.yaml" 
+                            /*sh "sed -i 's/\${imageName}/$imageName/' jenkins_listens/deployment.yaml"*/ 
                             sh "sed -i 's/\${namespaceName}/$namespaceName/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${containerPort}/$containerPort/' jenkins_listens/deployment.yaml"
                             sh "kubectl apply -f jenkins_listens/deployment.yaml"
