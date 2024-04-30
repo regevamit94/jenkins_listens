@@ -23,5 +23,6 @@ spec:
       containers:
       - name: ${containerName}
         image: ${imageName}:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: ${containerPort}
