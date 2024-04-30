@@ -33,22 +33,38 @@ pipeline {
                         sh "kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config jenkins_listens/kind.yaml"
 
                     }
-                    
-
-
+                }
+            }
+        }
+        stage('Check if Cluster exists') {
                     statusCode = sh(script: "docker images | grep -w  $imageName", returnStatus: true)
-                    if (statusCode == '1') {
+                    if (statusCode == 0) {
                         sh 'pwd'
                         echo "Image is already installed. skipping image build..."
                     } else {
                         sh 'pwd'
                         sh "docker build -f jenkins_listens/Dockerfile . -t $imageName"
                     }
+                }
+                   
                     sh "kubectl config use-context kind-$CLUSTERNAME"
+        stage('Check if Cluster exists') {
+                    
                     statusCode = sh(script: "kubectl get deployments | grep -w $deploymentName", returnStatus: true)
-                    sh "kubectl apply -f jenkins_listens/deployment.yaml"
+                    if (statusCode == 0) {
+                        echo 'Creating deployment...'
+                        sh "sed -i 's/\${deploymentName}/$deploymentName/' jenkins_listens/deployment.yaml"
+                        sh "sed -i 's/\${labelName}/$labelName/' jenkins_listens/deployment.yaml"
+                        sh "sed -i 's/\${containerName}/$containerName/' jenkins_listens/deployment.yaml"
+                        sh "sed -i 's/\${imageName}/$imageName/' jenkins_listens/deployment.yaml"
+                        sh "kubectl apply -f jenkins_listens/deployment.yaml"
+                    } else {
+                        echo 'deployment is already exist. Aborting...'
+
+                    }
                 }
             }
         }
-    }
-} 
+ 
+
+ 
