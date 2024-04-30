@@ -17,30 +17,34 @@ pipeline {
         stage("Clean Workspace"){
             steps{
                 cleanWs()
+                sh 'git clone https://$CREDS@github.com/regevamit94/jenkins_listens.git'
             }
         }
         stage('Check if Cluster exists') {
             steps {
                 script {
-                    def statusCode = sh(script: "kind get clusters | grep -w $CLUSTERNAME", returnStatus: true)
-                    if (statusCode == '1') {
-                        error "Kubernetes cluster '$CLUSTERNAME' is running!"
+                    def statusCode = sh(script: "kubectl config get-contexts kind-$CLUSTERNAME", returnStatus: true)
+                    if (statusCode == 0) {
+                        echo "${statusCode}"
+                        echo "Kubernetes cluster '$CLUSTERNAME' is running!"
                     } else {
+                        echo" ${statusCode}"
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
+                        sh "kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config jenkins_listens/kind.yaml"
 
                     }
-                    sh 'git clone https://$CREDS@github.com/regevamit94/jenkins_listens.git'
-                    sh "kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config jenkins_listens/kind.yaml"
+                    
 
 
                     statusCode = sh(script: "docker images | grep -w  $imageName", returnStatus: true)
                     if (statusCode == '1') {
+                        sh 'pwd'
                         echo "Image is already installed. skipping image build..."
                     } else {
+                        sh 'pwd'
                         sh "docker build -f jenkins_listens/Dockerfile . -t $imageName"
                     }
-                    sh "kubectl config use-context $CLUSTERNAME"
-
+                    sh "kubectl config use-context kind-$CLUSTERNAME"
                     statusCode = sh(script: "kubectl get deployments | grep -w $deploymentName", returnStatus: true)
                     sh "kubectl apply -f jenkins_listens/deployment.yaml"
                 }
