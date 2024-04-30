@@ -17,4 +17,4 @@ spec:
       - name: ${containerName}
         image: ${imageName}
         ports:
-        - containerPort: ${containerPort}
+        - containerPort: 80
