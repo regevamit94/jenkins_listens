@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: ${containerName}
-        image: ${imageName}:latest
+        image: ${imageName}
         imagePullPolicy: Never
         ports:
         - containerPort: ${containerPort}
