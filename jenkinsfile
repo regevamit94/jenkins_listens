@@ -15,7 +15,7 @@ pipeline {
 
     stages {
         stage("Clean Workspace"){
-            steps{
+            steps {
                 cleanWs()
                 sh 'git clone https://$CREDS@github.com/regevamit94/jenkins_listens.git'
             }
@@ -36,35 +36,40 @@ pipeline {
                 }
             }
         }
-        stage('Check if Cluster exists') {
-                    statusCode = sh(script: "docker images | grep -w  $imageName", returnStatus: true)
+        stage('Check if image exists') {
+            steps{
+                script{
+                    def statusCode = sh(script: "docker images | grep -w $imageName || exit 1 ", returnStatus: true)
                     if (statusCode == 0) {
-                        sh 'pwd'
                         echo "Image is already installed. skipping image build..."
                     } else {
-                        sh 'pwd'
+                        echo "Building image..."
                         sh "docker build -f jenkins_listens/Dockerfile . -t $imageName"
-                    }
-                }
-                   
-                    sh "kubectl config use-context kind-$CLUSTERNAME"
-        stage('Check if Cluster exists') {
-                    
-                    statusCode = sh(script: "kubectl get deployments | grep -w $deploymentName", returnStatus: true)
-                    if (statusCode == 0) {
-                        echo 'Creating deployment...'
-                        sh "sed -i 's/\${deploymentName}/$deploymentName/' jenkins_listens/deployment.yaml"
-                        sh "sed -i 's/\${labelName}/$labelName/' jenkins_listens/deployment.yaml"
-                        sh "sed -i 's/\${containerName}/$containerName/' jenkins_listens/deployment.yaml"
-                        sh "sed -i 's/\${imageName}/$imageName/' jenkins_listens/deployment.yaml"
-                        sh "kubectl apply -f jenkins_listens/deployment.yaml"
-                    } else {
-                        echo 'deployment is already exist. Aborting...'
-
                     }
                 }
             }
         }
- 
+                   
+        stage('Check if deployment exists') {
+                steps{
+                    script{
+                        sh "kubectl config use-context kind-$CLUSTERNAME"
+                        def statusCode = sh(script: "kubectl get deployments | grep -w $deploymentName || exit 1", returnStatus: true)
+                        if (statusCode == 1) {
+                            echo 'Creating deployment...'
+                            sh "sed -i 's/\${deploymentName}/$deploymentName/' jenkins_listens/deployment.yaml"
+                            sh "sed -i 's/\${labelName}/$labelName/' jenkins_listens/deployment.yaml"
+                            sh "sed -i 's/\${containerName}/$containerName/' jenkins_listens/deployment.yaml"
+                            sh "sed -i 's/\${imageName}/$imageName/' jenkins_listens/deployment.yaml" 
+                            sh "sed -i 's/\${namespaceName}/$namespaceName/' jenkins_listens/deployment.yaml"
+                            sh "kubectl apply -f jenkins_listens/deployment.yaml"
+                        } else {
+                            echo 'deployment is already exist. Aborting...'
 
+                        }
+                    }   
+                }   
+            }  
+     }
+}
  
