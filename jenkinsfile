@@ -64,6 +64,7 @@ pipeline {
                             sh "sed -i 's/\${namespaceName}/$namespaceName/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${containerPort}/$containerPort/' jenkins_listens/deployment.yaml"
                             sh "kubectl apply -f jenkins_listens/deployment.yaml"
+                            sh 'test'
 
                         } else {
                             echo 'deployment is already exist. Aborting...'
