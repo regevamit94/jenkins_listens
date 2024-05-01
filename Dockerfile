@@ -32,3 +32,5 @@ RUN cat <<EOF > /etc/apache2/sites-available/000-default.conf
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF
+
+RUN systemctl apache2 restart
