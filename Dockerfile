@@ -15,6 +15,14 @@ RUN wget https://wordpress.org/latest.tar.gz && tar -xvzf latest.tar.gz -C /var/
 
 RUN cat <<EOF > /etc/apache2/sites-available/000-default.conf
 
+RUN chown -R www-data:www-data /var/www/html
+
+EXPOSE 80
+
+CMD ["apache2ctl", "-D", "FOREGROUND"]
+
+RUN cat <<EOF > /etc/apache2/sites-available/000-default.conf
+
 <VirtualHost *:80>
     ServerName www.testexample.com
     ServerAdmin webmaster@localhost
@@ -24,9 +32,3 @@ RUN cat <<EOF > /etc/apache2/sites-available/000-default.conf
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF
-
-RUN chown -R www-data:www-data /var/www/html
-
-EXPOSE 80
-
-CMD ["apache2ctl", "-D", "FOREGROUND"]
