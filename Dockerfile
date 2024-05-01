@@ -13,7 +13,7 @@ RUN apt-get update && \
 
 RUN wget https://wordpress.org/latest.tar.gz && tar -xvzf latest.tar.gz -C /var/www/html --strip-components=1
 
-RUN cat <<EOF >> /etc/apache2/sites-available/000-default.conf
+RUN cat <<EOF > /etc/apache2/sites-available/000-default.conf
 
 <VirtualHost *:80>
     ServerName www.testexample.com
