@@ -31,7 +31,7 @@ pipeline {
                         echo" ${statusCode}"
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
                         sh "kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config jenkins_listens/kind.yaml"
-                        sh 'sleep 5'
+                    
                     }
                 }
             }
