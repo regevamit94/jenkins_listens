@@ -1,4 +1,4 @@
-def imageName = "apache-wp"
+def imageSource = "regevamit/apache-wp"
 def deploymentName = "apache-wp-dep"
 def namespaceName = "apache-webserver"
 def labelName = "my-webserver"
@@ -36,19 +36,6 @@ pipeline {
                 }
             }
         }
-        stage('Check if image exists') {
-            steps{
-                script{
-                    def statusCode = sh(script: "docker images | grep -w $imageName || exit 1 ", returnStatus: true)
-                    if (statusCode == 0) {
-                        echo "Image is already installed. skipping image build..."
-                    } else {
-                        echo "Building image..."
-                        sh "docker build -f jenkins_listens/Dockerfile . -t $imageName"
-                    }
-                }
-            }
-        }
                    
         stage('Check if deployment exists') {
                 steps{
@@ -60,7 +47,7 @@ pipeline {
                             sh "sed -i 's/\${deploymentName}/$deploymentName/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${labelName}/$labelName/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${containerName}/$containerName/' jenkins_listens/deployment.yaml"
-                            sh "sed -i 's/\${imageName}/$imageName/' jenkins_listens/deployment.yaml"
+                            sh "sed -i 's/\${imageSource}/$imageSource/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${namespaceName}/$namespaceName/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${containerPort}/$containerPort/' jenkins_listens/deployment.yaml"
                             sh "kubectl apply -f jenkins_listens/deployment.yaml"
