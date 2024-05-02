@@ -17,8 +17,8 @@ RUN wget https://wordpress.org/latest.tar.gz && tar -xvzf latest.tar.gz -C /var/
 RUN cat <<EOF > /etc/apache2/sites-available/000-default.conf
 
 <VirtualHost *:80>
-    ServerName www.testexample.com
-    ServerAdmin webmaster@localhost
+    ServerName www.containered.com
+    ServerAdmin containered@localhost
     DirectoryIndex index.php
     DocumentRoot /var/www/html
     ErrorLog ${APACHE_LOG_DIR}/error.log
