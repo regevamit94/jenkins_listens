@@ -3,11 +3,10 @@ kind: Service
 metadata:
   name: apache-wp-svc
 spec:
-  type: NodePort
   selector:
-    app: ${labelName}
+    app: ${labelName}    # Selecting PODS with those Labels
   ports:
-    - protocol: TCP
-      port: ${svcPort}
-      targetPort: ${containerPort}
-      nodePort: 30000
+    - protocol  : TCP
+      port      : ${svcPort}  # Port on SVC
+      targetPort: ${containerPort}  # Port on POD
+  type: ClusterIP
