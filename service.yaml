@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-wp-svc
+spec:
+  selector:
+    app: ${labelName}
+  ports:
+    - protocol: TCP
+      port: ${svcPort}
+      targetPort: ${containerPort}

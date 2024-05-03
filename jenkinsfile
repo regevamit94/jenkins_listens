@@ -4,6 +4,8 @@ def namespaceName = "apache-webserver"
 def labelName = "my-webserver"
 def containerName = "apache-wp"
 def containerPort = 80
+def webAddress = "containered.com"
+def svcPort = 8080
 
 pipeline {
     agent {label 'my_jenkins_slave'}
@@ -45,12 +47,16 @@ pipeline {
                         if (statusCode == 1) {
                             echo 'Creating deployment...'
                             sh "sed -i 's/\${deploymentName}/$deploymentName/' jenkins_listens/deployment.yaml"
-                            sh "sed -i 's/\${labelName}/$labelName/' jenkins_listens/deployment.yaml"
+                            sh "sed -i 's/\${labelName}/$labelName/' jenkins_listens/deployment.yaml jenkins_listens/service.yaml"
                             sh "sed -i 's/\${containerName}/$containerName/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${imageSource}/$imageSource/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${namespaceName}/$namespaceName/' jenkins_listens/deployment.yaml"
-                            sh "sed -i 's/\${containerPort}/$containerPort/' jenkins_listens/deployment.yaml"
+                            sh "sed -i 's/\${containerPort}/$containerPort/' jenkins_listens/deployment.yaml jenkins_listens/service.yaml"
+                            sh "sed -i 's/\${webAddress}/$webAddress/' jenkins_listens/ingress.yaml"
+                            sh "sed -i 's/\${svcPort}/$svcPort/' jenkins_listens/ingress.yaml jenkins_listens/service.yaml"
                             sh "kubectl apply -f jenkins_listens/deployment.yaml"
+                            sh "kubectl apply -f jenkins_listens/service.yaml"
+                            sh "kubectl apply -f jenkins_listens/ingress.yaml"
                             
 
                         } else {
