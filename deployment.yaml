@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: ${containerName}
-        image: ${imageName}
+        image: ${imageSource}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: ${containerPort}
