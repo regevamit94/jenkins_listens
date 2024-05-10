@@ -9,4 +9,5 @@ spec:
     - protocol  : TCP
       port      : ${svcPort}  # Port on SVC
       targetPort: ${containerPort}  # Port on POD
+      NodePort: 30001
   type: NodePort
