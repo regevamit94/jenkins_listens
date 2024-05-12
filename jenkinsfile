@@ -60,7 +60,7 @@ pipeline {
                             
 
                         } else {
-                            echo "deployment $deploymentName is already exist. Aborting..."
+                            echo "deployment: $deploymentName is already exist. Aborting..."
 
                         }
                     }   
