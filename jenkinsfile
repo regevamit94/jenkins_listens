@@ -43,7 +43,7 @@ pipeline {
                 steps{
                     script{
                         sh "kubectl config use-context kind-$CLUSTERNAME"
-                        def statusCode = sh(script: "kubectl get deployments | grep -w $deploymentName || exit 1", returnStatus: true)
+                        def statusCode = sh(script: "kubectl get deployments -n $namespaceName | grep -w $deploymentName || exit 1", returnStatus: true)
                         if (statusCode == 1) {
                             echo 'Creating deployment...'
                             sh "sed -i 's/\${deploymentName}/$deploymentName/' jenkins_listens/deployment.yaml"
