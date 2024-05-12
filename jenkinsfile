@@ -28,7 +28,7 @@ pipeline {
                     def statusCode = sh(script: "kubectl config get-contexts kind-$CLUSTERNAME", returnStatus: true)
                     if (statusCode == 0) {
                         echo "${statusCode}"
-                        echo "Kubernetes cluster '$CLUSTERNAME' is running!"
+                        echo "Kubernetes cluster '$CLUSTERNAME' is already running!"
                     } else {
                         echo" ${statusCode}"
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
@@ -60,7 +60,7 @@ pipeline {
                             
 
                         } else {
-                            echo 'deployment is already exist. Aborting...'
+                            echo "deployment $deploymentName is already exist. Aborting..."
 
                         }
                     }   
