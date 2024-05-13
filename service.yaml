@@ -10,5 +10,4 @@ spec:
     - protocol  : TCP
       port      : ${svcPort}  # Port on SVC
       targetPort: ${containerPort}  # Port on POD
-      nodePort: 30001
-  type: NodePort
+  type: LoadBalancer
