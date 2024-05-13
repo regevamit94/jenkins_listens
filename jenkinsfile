@@ -8,7 +8,7 @@ def webAddress = "containered.com"
 def svcPort = 8080
 
 pipeline {
-    agent {labels 'my_gcp_slave'}
+    agent {label 'my_gcp_slave'}
 
      environment {
        CLUSTERNAME = 'test'
