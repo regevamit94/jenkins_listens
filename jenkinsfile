@@ -8,7 +8,7 @@ def webAddress = "containered.com"
 def svcPort = 8080
 
 pipeline {
-    agent {label 'my_jenkins_slave'}
+    agent {label 'my_jenkins_slave', 'pullfromgit_gcp'}
 
      environment {
        CLUSTERNAME = 'test'
