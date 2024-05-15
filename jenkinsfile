@@ -4,7 +4,7 @@ def namespaceName = "apache-webserver"
 def labelName = "my-webserver"
 def containerName = "apache-wp"
 def containerPort = 80
-def webAddress = "containered.com"
+def webAddress = "yankeespro.com"
 def svcPort = 8080
 
 pipeline {
