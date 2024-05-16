@@ -10,4 +10,4 @@ spec:
     - protocol  : TCP
       port      : ${svcPort}  # Port on SVC
       targetPort: ${containerPort}  # Port on POD
-  type: LoadBalancer
+  type: ClusterIP
