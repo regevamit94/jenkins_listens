@@ -11,7 +11,7 @@ pipeline {
     agent {label 'my_gcp_slave'}
 
      environment {
-       CLUSTERNAME = 'test'
+       CLUSTERNAME = 'test-cluster'
        CREDS = credentials('ca585f6b-23d5-4131-8d32-e9ad6c2efa75')
     }  
 
