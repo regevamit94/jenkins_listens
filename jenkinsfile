@@ -43,7 +43,8 @@ pipeline {
         stage('Check if Ingress controller exists') {
             steps {
                 script{
-                    def statuscode = sh(script: "kubectl get svc -n nginx-ingress nginx-ingress-ingress-nginx-controller", returnStatus: true)
+                    def statuscode = sh(script: "kubectl get svc -A nginx-ingress-ingress-nginx-controller", returnStatus: true)
+                    echo "${statusCode}"
                     if (statusCode == 0) {
                         echo "The nginx ingress controller is already running"
                     } else {
