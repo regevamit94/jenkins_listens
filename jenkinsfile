@@ -33,7 +33,7 @@ pipeline {
                     } else {
                         echo" ${statusCode}"
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
-                        sh "gcloud container clusters create $$CLUSTERNAME --zone=$ZONE"
+                        sh "gcloud container clusters create $CLUSTERNAME --zone=$ZONE"
                     
                     }
                 }
