@@ -53,7 +53,7 @@ pipeline {
                                 echo "Helm is installed"
                                 echo "Applying the NGINX-ingress-controller"
                                 echo "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update"
-                                sh "pwd"
+                                sh "helm show values ingress-nginx/ingress-nginx > values.yaml"
                                 sh "helm install nginx-ingress ingress-nginx/ingress-nginx -f values.yaml"
                             } else{
                                 echo "Installing helm..."
@@ -61,6 +61,7 @@ pipeline {
                                 sh "chmod 700 get_helm.sh"
                                 echo "Applying the NGINX-ingress-controller..."
                                 sh "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update"
+                                sh "helm show values ingress-nginx/ingress-nginx > values.yaml"
                                 sh "helm install nginx-ingress ingress-nginx/ingress-nginx -f values.yaml"
 
                             }
