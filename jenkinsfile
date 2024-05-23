@@ -48,7 +48,7 @@ pipeline {
                     if (statusCode == 0) {
                         echo "The nginx ingress controller is already running"
                     } else {
-                            def helmstatus = sh(script: "helm", returnStatus: true)
+                            def helmstatus = sh(script: "helm version", returnStatus: true)
                             if (helmstatus == 0) {
                                 echo "Helm is installed"
                                 echo "Applying the NGINX-ingress-controller"
@@ -58,6 +58,7 @@ pipeline {
                                 sh "curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"
                                 sh "chmod 700 get_helm.sh"
                                 echo "Applying the NGINX-ingress-controller..."
+                                sh "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update"
                                 sh "helm install nginx-ingress ingress-nginx/ingress-nginx -f values.yaml"
 
                             }
