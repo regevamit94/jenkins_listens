@@ -12,6 +12,7 @@ pipeline {
 
      environment {
        CLUSTERNAME = 'test-cluster'
+       ZONE = europe-west1-b
        CREDS = credentials('ca585f6b-23d5-4131-8d32-e9ad6c2efa75')
     }  
 
@@ -25,24 +26,52 @@ pipeline {
         stage('Check if Cluster exists') {
             steps {
                 script {
-                    def statusCode = sh(script: "kubectl config get-contexts kind-$CLUSTERNAME", returnStatus: true)
+                    def statusCode = sh(script: "gcloud container clusters describe $CLUSTERNAME --zone=$ZONE", returnStatus: true)
                     if (statusCode == 0) {
                         echo "${statusCode}"
                         echo "Kubernetes cluster '$CLUSTERNAME' is already running!"
                     } else {
                         echo" ${statusCode}"
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
-                        sh "kind create cluster --name $CLUSTERNAME --image kindest/node:v1.23.6 --config jenkins_listens/kind.yaml"
+                        sh "gcloud container clusters create $$CLUSTERNAME --zone=$ZONE"
                     
                     }
                 }
             }
         }
+
+        stage('Check if Ingress controller exists') {
+            steps {
+                script{
+                    def statuscode = sh(script: "kubectl get svc -n nginx-ingress nginx-ingress-ingress-nginx-controller", returnStatus: true)
+                    if (statusCode == 0) {
+                        echo "The nginx ingress controller is already running"
+                    } else {
+                            def helmstatus = sh(script: "helm", returnStatus: true)
+                            if (helmstatus == 0) {
+                                echo "Helm is installed"
+                                echo "Applying the NGINX-ingress-controller"
+                                sh "helm install nginx-ingress ingress-nginx/ingress-nginx -f values.yaml"
+                            } else{
+                                echo "Installing helm..."
+                                sh "curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"
+                                sh "chmod 700 get_helm.sh"
+                                echo "Applying the NGINX-ingress-controller..."
+                                sh "helm install nginx-ingress ingress-nginx/ingress-nginx -f values.yaml"
+
+                            }
+
+
+                    }
+                }
+            }
+        }
+            
                    
         stage('Check if deployment exists') {
                 steps{
                     script{
-                        sh "kubectl config use-context kind-$CLUSTERNAME"
+                        sh "gcloud container clusters get-credentials '$CLUSTERNAME' --zone $ZONE"
                         def statusCode = sh(script: "kubectl get deployments -n $namespaceName | grep -w $deploymentName || exit 1", returnStatus: true)
                         if (statusCode == 1) {
                             echo 'Creating deployment...'

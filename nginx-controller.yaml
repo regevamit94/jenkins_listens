@@ -22,4 +22,3 @@ spec:
       targetPort: 443
   selector:
     app: ingress-nginx
-  externalIPs: ["35.195.195.105"]
