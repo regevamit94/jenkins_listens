@@ -12,7 +12,7 @@ pipeline {
 
      environment {
        CLUSTERNAME = 'test-cluster'
-       ZONE = europe-west1-b
+       ZONE = 'europe-west1-b'
        CREDS = credentials('ca585f6b-23d5-4131-8d32-e9ad6c2efa75')
     }  
 
