@@ -74,7 +74,7 @@ pipeline {
                         sh "gcloud container clusters get-credentials '$CLUSTERNAME' --zone $ZONE"
                         def statusCode = sh(script: "kubectl get deployments -n $namespaceName | grep -w $deploymentName || exit 1", returnStatus: true)
                         if (statusCode == 1) {
-                            echo 'Creating deployment...'
+                            echo 'Creating deployment and applying service&ingress'
                             sh "sed -i 's/\${deploymentName}/$deploymentName/' jenkins_listens/deployment.yaml"
                             sh "sed -i 's/\${labelName}/$labelName/' jenkins_listens/deployment.yaml jenkins_listens/service.yaml"
                             sh "sed -i 's/\${containerName}/$containerName/' jenkins_listens/deployment.yaml"
@@ -83,6 +83,7 @@ pipeline {
                             sh "sed -i 's/\${containerPort}/$containerPort/' jenkins_listens/deployment.yaml jenkins_listens/service.yaml"
                             sh "sed -i 's/\${webAddress}/$webAddress/' jenkins_listens/ingress.yaml"
                             sh "sed -i 's/\${svcPort}/$svcPort/' jenkins_listens/ingress.yaml jenkins_listens/service.yaml"
+
                             sh "kubectl apply -f jenkins_listens/deployment.yaml"
                             sh "kubectl apply -f jenkins_listens/service.yaml"
                             sh "kubectl apply -f jenkins_listens/ingress.yaml"
