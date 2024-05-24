@@ -14,6 +14,8 @@ pipeline {
        CLUSTERNAME = 'test-cluster'
        ZONE = 'europe-west1-b'
        CREDS = credentials('ca585f6b-23d5-4131-8d32-e9ad6c2efa75')
+       GCP_RESOURCE_CREDENTIALS = credentials('gcp-service-account-key')
+       PROJECT_ID = 'proud-shoreline-420009'
     }  
 
     stages {
@@ -23,6 +25,19 @@ pipeline {
                 sh 'git clone https://$CREDS@github.com/regevamit94/jenkins_listens.git'
             }
         }
+
+        stage('Authenticate to GCP') {
+            steps {
+                script {
+                    def jsonKeyFile = "${WORKSPACE}/gcp-key.json"
+                    writeFile file: jsonKeyFile, text: GCP_RESOURCE_CREDENTIALS
+                    sh "gcloud auth activate-service-account --key-file=${jsonKeyFile}"
+                    sh "gcloud config set project ${PROJECT_ID}"
+                    sh "gcloud config set compute/zone ${ZONE}"
+                }
+            }
+        }
+
         stage('Check if Cluster exists') {
             steps {
                 script {
