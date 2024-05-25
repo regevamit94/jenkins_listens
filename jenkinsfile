@@ -118,7 +118,7 @@ pipeline {
         stage("Get NGINX Ingress controller IP") {
             steps {
                 script {
-                    def externalIP = sh(script: "kubectl get svc -n $namespaceName nginx-ingress-ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}'", returnStdout: true)
+                    def externalIP = sh(script: "kubectl get svc -n $controllerNS nginx-ingress-ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}'", returnStdout: true)
                     if (externalIP) {
                     echo "The NGINX controller external IP address is: ${externalIP}. The '$webAddress' domains's A record must be edited to point to this IP Address"
                     } else {
