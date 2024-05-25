@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     def jsonKeyFile = "${WORKSPACE}/gcp-key.json"
-                    writeFile file: jsonKeyFile, text: GCP_RESOURCE_CREDENTIALS
+                    writeFile file: ${jsonKeyFile}, text: GCP_RESOURCE_CREDENTIALS
                     sh "gcloud auth activate-service-account --key-file=${jsonKeyFile}"
                     sh "gcloud config set project $PROJECT_ID"
                     sh "gcloud config set compute/zone $ZONE"
