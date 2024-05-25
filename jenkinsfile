@@ -30,7 +30,7 @@ pipeline {
         stage('Authenticate to GCP') {
             steps {
                 script {
-                    writeFile file: ${WORKSPACE}/gcp-key.json, text: GCP_RESOURCE_CREDENTIALS
+                    writeFile file: "${WORKSPACE}/gcp-key.json", text: GCP_RESOURCE_CREDENTIALS
                     sh "gcloud auth activate-service-account --key-file=${WORKSPACE}/gcp-key.json"
                     sh "gcloud config set project $PROJECT_ID"
                     sh "gcloud config set compute/zone $ZONE"
