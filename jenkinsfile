@@ -27,13 +27,12 @@ pipeline {
             }
         }
 
-        stage('Authenticate to GCP') {
+        stage('Authenticate with GCP') {
             steps {
                 script {
-                    writeFile file: "${WORKSPACE}/gcp-key.json", text: GCP_RESOURCE_CREDENTIALS
-                    sh "gcloud auth activate-service-account --key-file=${WORKSPACE}/gcp-key.json"
-                    sh "gcloud config set project $PROJECT_ID"
-                    sh "gcloud config set compute/zone $ZONE"
+                    withCredentials([file(credentialsId: 'gcp-service-account-key', variable: 'SERVICE_ACCOUNT_KEY')]) {
+                        sh "gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT_KEY}"
+                    }
                 }
             }
         }
@@ -119,16 +118,14 @@ pipeline {
         stage("Get NGINX Ingress controller IP") {
             steps {
                 script{
-                    if (externalIP){
                     def externalIP = sh(script: "kubectl get svc -n $namespaceName nginx-ingress-ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}'", returnStdout: true)
                     echo "The NGINX controller external IP address is: ${externalIP}. The '$webAddress' domains's A record must be edited to point to this IP Address"
-                    }
-                    else {
+                    } else {
                         echo "NGINX Ingress controller has no EXTERNAL-IP. Aborting action..."
                     }
-                }
             }
         }
-     }
+    }
+    
 }
  
