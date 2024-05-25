@@ -40,12 +40,10 @@ pipeline {
         stage('Check if Cluster exists') {
             steps {
                 script {
-                    def statusCode = sh(script: "gcloud container clusters describe $CLUSTERNAME --zone=$ZONE", returnStatus: true)
+                    def statusCode = sh(script: "gcloud container clusters describe $CLUSTERNAME --zone=$ZONE  >/dev/null", returnStatus: true)
                     if (statusCode == 0) {
-                        echo "${statusCode}"
                         echo "Kubernetes cluster '$CLUSTERNAME' is already running!"
                     } else {
-                        echo" ${statusCode}"
                         echo "Kubernetes cluster '$CLUSTERNAME' is not running. It will be created now."
                         sh "gcloud container clusters create $CLUSTERNAME --zone=$ZONE"
                     
@@ -57,7 +55,7 @@ pipeline {
         stage('Check if Ingress controller exists') {
             steps {
                 script{
-                    def statusCode = sh(script: "kubectl get svc -A | grep -w nginx-ingress-ingress-nginx-controller", returnStatus: true)
+                    def statusCode = sh(script: "kubectl get svc -A | grep -w nginx-ingress-ingress-nginx-controller >/dev/null", returnStatus: true)
                     echo "${statusCode}"
                     if (statusCode == 0) {
                         echo "The nginx ingress controller is already running"
@@ -90,8 +88,8 @@ pipeline {
         stage('Check if deployment exists') {
                 steps{
                     script{
-                        sh "gcloud container clusters get-credentials '$CLUSTERNAME' --zone $ZONE"
-                        def statusCode = sh(script: "kubectl get deployments -n $namespaceName | grep -w $deploymentName || exit 1", returnStatus: true)
+                        sh "gcloud container clusters get-credentials '$CLUSTERNAME' --zone $ZONE  >/dev/null"
+                        def statusCode = sh(script: "kubectl get deployments -n $namespaceName | grep -w $deploymentName >/dev/null || exit 1 ", returnStatus: true)
                         if (statusCode == 1) {
                             echo 'Creating deployment and applying service&ingress'
                             sh "sed -i 's/\${deploymentName}/$deploymentName/' jenkins_listens/deployment.yaml"
@@ -118,7 +116,7 @@ pipeline {
         stage("Get NGINX Ingress controller IP") {
             steps {
                 script {
-                    def externalIP = sh(script: "kubectl get svc -n $controllerNS nginx-ingress-ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}'", returnStdout: true)
+                    def externalIP = sh(script: "kubectl get svc nginx-ingress-ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}'", returnStdout: true)
                     if (externalIP) {
                     echo "The NGINX controller external IP address is: ${externalIP}. The '$webAddress' domains's A record must be edited to point to this IP Address"
                     } else {
