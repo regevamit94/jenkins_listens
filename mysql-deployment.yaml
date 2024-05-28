@@ -28,29 +28,29 @@ spec:
             secretKeyRef:
               name: mysql-secret
               key: mysql-root-password
-        ports:
-        - containerPort: 3306
-      initContainers:
-      - name: init-mysql
-        image: mysql:5.7
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secret
-              key: mysql-root-password
         - name: MYSQL_DATABASE
-          value: test_db
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-config
+              key: MYSQL_DATABASE
         - name: MYSQL_USER
-          value: test_user
+          valueFrom:
+            configMapKeyRef:
+              name: mysql-config
+              key: MYSQL_USER
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-secret
               key: mysql-password
-        command: ['sh', '-c', 'mysql --user=root --password=$MYSQL_ROOT_PASSWORD <<-EOSQL
-                  CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;
-                  CREATE USER IF NOT EXISTS "$MYSQL_USER"@"%" IDENTIFIED BY "$MYSQL_PASSWORD";
-                  GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO "$MYSQL_USER"@"%";
-                  FLUSH PRIVILEGES;
-                  EOSQL']
+        ports:
+        - containerPort: 3306
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "until mysqladmin ping -h 127.0.0.1 --silent; do sleep 5; done && \
+                                      mysql -u root -p${MYSQL_ROOT_PASSWORD} -e \"
+                                      CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};
+                                      CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
+                                      GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
+                                      FLUSH PRIVILEGES;\""]
