@@ -7,6 +7,7 @@ def containerPort = 80
 def webAddress = "yankeespro.com"
 def svcPort = 8080
 def controllerNS = "nginx-ingress"
+def pvcName = "my-pvc"
 pipeline {
     agent {label 'my_gcp_slave'}
 
@@ -100,6 +101,7 @@ pipeline {
                             sh "sed -i 's/\${containerPort}/$containerPort/' jenkins_listens/deployment.yaml jenkins_listens/service.yaml"
                             sh "sed -i 's/\${webAddress}/$webAddress/' jenkins_listens/ingress.yaml"
                             sh "sed -i 's/\${svcPort}/$svcPort/' jenkins_listens/ingress.yaml jenkins_listens/service.yaml"
+                            sh "sed -i 's/\${pvcName}/$pvcName/' jenkins_listens/deployment.yaml"
 
                             sh "kubectl apply -f jenkins_listens/deployment.yaml"
                             sh "kubectl apply -f jenkins_listens/service.yaml"
