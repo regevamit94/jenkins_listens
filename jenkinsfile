@@ -14,7 +14,7 @@ pipeline {
      environment {
        CLUSTERNAME = 'test-cluster'
        ZONE = 'europe-west1-b'
-       CREDS = credentials('ca585f6b-23d5-4131-8d32-e9ad6c2efa75')
+       CREDS = credentials('3f0e5018-6669-482c-ba56-a6cebab4bc28')
        GCP_RESOURCE_CREDENTIALS = credentials('gcp-service-account-key')
        PROJECT_ID = 'proud-shoreline-420009'
        DNS_ZONE = 'yankeespro-com'
