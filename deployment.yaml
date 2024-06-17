@@ -32,4 +32,4 @@ spec:
       volumes:
       - name: wordpress-data
         persistentVolumeClaim:
-        claimName: my-pvc
+          claimName: my-pvc
