@@ -31,5 +31,4 @@ spec:
           mountPath: /var/www/html
       volumes:
       - name: wordpress-data
-        persistentVolumeClaim:
-          claimName: ${my-pvc}
+        path: /home/jenkins/wp-files-volume
